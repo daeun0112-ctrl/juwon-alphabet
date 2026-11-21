@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fff4e9">
+<title>주원이의 알파벳 놀이터</title>
+<style>
+:root{--orange:#f47a35;--ink:#344256;--muted:#8290a2;--cream:#fff4e9;--line:#f1dfd0}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;background:linear-gradient(180deg,#fff8f1 0%,#f7f8ff 100%);color:var(--ink);min-height:100vh;padding:20px 14px 34px}
+.app{max-width:760px;margin:auto}
+header{text-align:center;padding:8px 8px 18px}
+.mascot{font-size:44px;line-height:1}
+h1{font-size:clamp(25px,6vw,34px);margin:8px 0 5px;color:#e96d2b;letter-spacing:-1px}
+.subtitle{margin:0;color:#8c786b;font-size:14px}
+.player{background:#202938;border:5px solid #fff;border-radius:24px;overflow:hidden;box-shadow:0 9px 25px #42516a20;margin:0 auto 18px;max-width:680px}
+.player-screen{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#45536a,#202938 70%);color:white;text-align:center}
+.placeholder{padding:20px}
+.placeholder .big{font-size:46px}
+.placeholder p{margin:9px 0 0;font-weight:700}
+iframe{width:100%;height:100%;border:0;display:block}
+.now-playing{background:#fff;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.now-title{font-weight:800;color:#e96d2b}
+.now-word{font-size:13px;color:#8290a2}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media(min-width:480px){.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
+.card{appearance:none;border:2px solid #f0e8e1;background:#fff;border-radius:18px;padding:12px 6px 11px;min-width:0;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 12px #3442560c;cursor:pointer;color:inherit;transition:transform .15s,border-color .15s,background .15s}
+.card:active{transform:scale(.97)}
+.card.active{background:#fff0e5;border-color:var(--orange);box-shadow:0 5px 15px #f47a3530}
+.letter{font-size:29px;line-height:1.05;font-weight:900;letter-spacing:-1px}
+.card.active .letter{color:#e96d2b}
+.animal{font-size:25px;margin:5px 0 2px}
+.word{font-size:12px;font-weight:750;color:#718096;white-space:nowrap}
+.play{margin-top:6px;font-size:10px;border-radius:99px;padding:3px 9px;background:#f0f3f7;color:#637184;font-weight:700}
+.card.active .play{background:#f47a35;color:white}
+footer{text-align:center;color:#9a8d83;font-size:11px;margin:18px 0 0}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+  <div class="mascot" aria-hidden="true">🦊</div>
+  <h1>주원이의 알파벳 놀이터</h1>
+  <p class="subtitle">알파벳 친구를 누르면 영상이 시작돼요!</p>
+</header>
+<section class="player" aria-label="영상 재생 영역">
+  <div class="player-screen" id="screen">
+    <div class="placeholder"><div class="big">🐾</div><p>아래에서 알파벳 친구를 골라봐!</p></div>
+  </div>
+  <div class="now-playing"><span class="now-title" id="current-letter">Let's play!</span><span class="now-word" id="current-word">알파벳을 선택해 주세요</span></div>
+</section>
+<section class="grid" id="cards" aria-label="알파벳 카드"></section>
+<footer>주원이의 즐거운 영어 놀이 · A to Z</footer>
+</main>
+<script>
+const videos = [
+['Aa','Alligator','🐊','4heO0ohmKjs'],['Bb','Bear','🐻','MzRQHYsrNYo'],
+['Cc','Cat','🐱','FHDvc2AQK2Q'],['Dd','Dog','🐶','wRl1uYuGFt0'],
+['Ee','Elephant','🐘','l53Mq-u2xZc'],['Ff','Fox','🦊','Nz19tbWwXBA'],
+['Gg','Gorilla','🦍','T83U3zYUeFU'],['Hh','Hippo','🦛','LFAvNz44vJU'],
+['Ii','Iguana','🦎','4Dd0E9x7aWU'],['Jj','Jaguar','🐆','EL0vkLT6png'],
+['Kk','Kangaroo','🦘','8dx-Lfado6Y'],['Ll','Lion','🦁','h67eMAqAoVU'],
+['Mm','Monkey','🐵','8zFOfP-xw_E'],['Nn','Newt','🦎','kH3pJWzMVGM'],
+['Oo','Octopus','🐙','cypKK6ZnW4w'],['Pp','Pig','🐷','r9vgXNpuW-A'],
+['Qq','Quail','🐦','Asq3maldhwc'],['Rr','Rabbit','🐰','Asq3maldhwc'],
+['Ss','Snake','🐍','Asq3maldhwc'],['Tt','Tiger','🐯','FPdzx06Ur_4'],
+['Uu','Umbrella','☂️','Asq3maldhwc'],['Vv','Vulture','🦅','Asq3maldhwc'],
+['Ww','Wolf','🐺','SssyojxK6P4'],['Xx','Fox (x)','🦊','Asq3maldhwc'],
+['Yy','Yak','🐂','Asq3maldhwc'],['Zz','Zebra','🦓','Asq3maldhwc']
+];
+const grid=document.getElementById('cards');
+const screen=document.getElementById('screen');
+const currentLetter=document.getElementById('current-letter');
+const currentWord=document.getElementById('current-word');
+videos.forEach((item)=>{
+  const [letter,word,animal,id]=item;
+  const button=document.createElement('button');
+  button.type='button';button.className='card';
+  button.setAttribute('aria-label',`${letter}, ${word} 영상 재생`);
+  button.innerHTML=`<span class="letter">${letter}</span><span class="animal">${animal}</span><span class="word">${word}</span><span class="play">▶ 재생</span>`;
+  button.addEventListener('click',()=>{
+    document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+    button.classList.add('active');
+    currentLetter.textContent=letter;
+    currentWord.textContent=word;
+    screen.innerHTML=`<iframe title="${letter} ${word} video" src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    document.querySelector('.player').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  grid.appendChild(button);
+});
+</script>
+</body>
+</html>
