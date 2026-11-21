@@ -84,7 +84,7 @@ videos.forEach((item)=>{
     button.classList.add('active');
     currentLetter.textContent=letter;
     currentWord.textContent=word;
-    screen.innerHTML=`<iframe title="${letter} ${word} video" src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    screen.innerHTML=`<iframe title="${letter} ${word} video" src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
     document.querySelector('.player').scrollIntoView({behavior:'smooth',block:'start'});
   });
   grid.appendChild(button);
