@@ -42,7 +42,7 @@ footer{text-align:center;color:#9a8d83;font-size:11px;margin:18px 0 0}
 <header>
   <div class="mascot" aria-hidden="true">🦊</div>
   <h1>주원이의 알파벳 놀이터</h1>
-  <p class="subtitle">알파벳 친구를 누르면 영상이 시작돼요!</p>
+  <p class="subtitle">알파벳 친구를 누르면 YouTube 앱에서 영상이 열려요!</p>
 </header>
 <section class="player" aria-label="영상 재생 영역">
   <div class="player-screen" id="screen">
@@ -84,8 +84,8 @@ videos.forEach((item)=>{
     button.classList.add('active');
     currentLetter.textContent=letter;
     currentWord.textContent=word;
-    screen.innerHTML=`<iframe title="${letter} ${word} video" src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-    document.querySelector('.player').scrollIntoView({behavior:'smooth',block:'start'});
+    screen.innerHTML=`<div class="placeholder"><div class="big">${animal}</div><p>${letter} ${word} 영상을 YouTube 앱에서 열어요!</p></div>`;
+    window.location.href=`https://www.youtube.com/watch?v=${encodeURIComponent(id)}`;
   });
   grid.appendChild(button);
 });
